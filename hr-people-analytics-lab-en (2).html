@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HR People Analytics Lab</title>
+<style>
+:root{color-scheme:dark;--bg:#08111f;--panel:#101d30;--line:#263a54;--text:#edf5ff;--muted:#9eb1c9;--cyan:#42d7e8;--purple:#b49aff;--green:#74e0b2;--orange:#ffbd73;font-family:system-ui,-apple-system,"Segoe UI","Noto Sans",sans-serif}
+*{box-sizing:border-box}
+body{margin:0;color:var(--text);line-height:1.6;background:radial-gradient(ellipse at 12% 0%,#42d7e81f,transparent 36%),radial-gradient(ellipse at 90% 10%,#b49aff1f,transparent 30%),var(--bg)}
+button,input,select,textarea{font:inherit}
+button,input[type=range]{accent-color:var(--cyan)}
+button{border:1px solid var(--line);border-radius:11px;padding:10px 15px;color:var(--text);background:#182a42;cursor:pointer}
+button:hover{border-color:var(--cyan)}
+button.primary{color:#06131e;background:var(--cyan);font-weight:750}
+header,main,footer{max-width:1180px;margin:auto;padding-left:22px;padding-right:22px}
+header{padding-top:28px;padding-bottom:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{width:46px;height:46px;display:grid;place-items:center;border-radius:14px;background:#42d7e82b;border:1px solid #42d7e873;font-size:24px}
+.eyebrow{color:var(--cyan);font-size:.76rem;letter-spacing:.16em;font-weight:800}
+h1{font-size:clamp(1.8rem,4vw,3rem);line-height:1.15;margin:12px 0}
+h2{margin:0 0 8px;font-size:clamp(1.25rem,2vw,1.7rem)}
+h3{margin:0 0 8px;font-size:1.05rem}
+p{margin:7px 0}
+.lead,.kicker{color:var(--muted)}
+.lead{max-width:760px}
+.meta,.tabs,.buttons,.legend{display:flex;flex-wrap:wrap;gap:9px}
+.meta{margin-top:18px}
+.pill{border:1px solid var(--line);border-radius:999px;padding:5px 10px;font-size:.82rem;color:var(--muted);background:#101d30bf}
+main{padding-top:12px;padding-bottom:56px}
+.tabs{margin:18px 0 20px}
+.tab{flex:1 1 220px;text-align:left;padding:13px 16px}
+.tab[aria-selected=true]{border-color:var(--cyan);background:#42d7e81a}
+.panel{background:linear-gradient(145deg,#101d30f5,#0c1828f5);border:1px solid var(--line);border-radius:18px;padding:clamp(16px,3vw,26px);box-shadow:0 16px 40px #0002}
+.layout{display:grid;grid-template-columns:minmax(250px,.85fr) minmax(0,1.5fr);gap:16px}
+.control,.viz,.metric,.lesson{background:#14243ab8;border:1px solid var(--line);border-radius:14px;padding:16px}
+.control{display:flex;flex-direction:column;gap:15px}
+.field label{display:block;color:var(--muted);font-size:.9rem;margin-bottom:7px}
+select,textarea{width:100%;color:var(--text);background:#091625;border:1px solid #334b68;border-radius:10px;padding:10px}
+input[type=range]{width:100%;cursor:pointer}
+.rangehead{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.value{color:var(--cyan);font-weight:800;font-variant-numeric:tabular-nums}
+.hint,.small{color:var(--muted);font-size:.82rem}
+.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:12px}
+.metrics.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.metric-label{color:var(--muted);font-size:.82rem}
+.metric-value{font-size:clamp(1.25rem,2.5vw,2rem);font-weight:800;overflow-wrap:anywhere}
+.cyan .metric-value{color:var(--cyan)}
+.purple .metric-value{color:var(--purple)}
+.green .metric-value{color:var(--green)}
+.orange .metric-value{color:var(--orange)}
+.charttitle{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center}
+.chart{width:100%;height:auto;display:block}
+.legend{font-size:.82rem;color:var(--muted);margin-top:8px}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:4px}
+.callout{border-left:3px solid var(--cyan);padding:10px 13px;background:#42d7e80f;border-radius:0 10px 10px 0}
+.formula{font-family:ui-monospace,Consolas,monospace;color:var(--cyan);background:#081625;padding:11px;border-radius:10px;overflow-wrap:anywhere}
+.lessons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}
+.lesson p{color:var(--muted);font-size:.9rem}
+.question{color:var(--orange);font-weight:700}
+.feedback{min-height:1.5em;color:var(--green);font-size:.9rem}
+.hidden{display:none!important}
+.badge{display:inline-block;border:1px solid #74e0b259;color:var(--green);border-radius:8px;padding:3px 8px;font-size:.78rem}
+.section-gap{margin-top:16px}
+textarea{resize:vertical}
+footer{padding-bottom:36px;color:var(--muted);font-size:.82rem}
+@media(max-width:800px){.layout,.lessons{grid-template-columns:1fr}.metrics.three{grid-template-columns:1fr}}
+@media(max-width:460px){header,main,footer{padding-left:13px;padding-right:13px}.metrics{grid-template-columns:1fr}.panel{padding:15px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="mark">⌁</div>
+    <div>
+      <div class="eyebrow">PEOPLE ANALYTICS · LEARNING LAB</div>
+      <strong>HR People Analytics Lab</strong>
+    </div>
+  </div>
+  <h1>Understand HR data through interactive experiments.</h1>
+  <p class="lead">Explore data from 120 employees in a CSV, adjust values, and observe how statistics change. All calculations run locally in your browser; no data is uploaded.</p>
+  <div class="meta">
+    <span class="pill">📊 120 Employees</span>
+    <span class="pill">🧮 Mean and Median</span>
+    <span class="pill">↗ Pearson correlation coefficient r</span>
+    <span class="pill">Works Offline</span>
+  </div>
+</header>
+
+<main>
+<div class="tabs" role="tablist">
+  <button class="tab" id="tab1" role="tab" aria-selected="true">
+    LEVEL 01　<strong>Salary Outlier Lab</strong>
+    <div class="hint">Mean vs. Median</div>
+  </button>
+  <button class="tab" id="tab2" role="tab" aria-selected="false">
+    LEVEL 02　<strong>Does Longer Tenure Mean Higher Pay?</strong>
+    <div class="hint">Pearson correlation coefficient r</div>
+  </button>
+</div>
+
+<section id="salary">
+<div class="panel">
+  <div class="charttitle">
+    <div>
+      <div class="eyebrow">LEVEL 01 / DESCRIPTIVE STATISTICS</div>
+      <h2>Salary Outlier Lab</h2>
+      <p class="kicker">How do the overall mean and median change when you adjust one employee’s monthly salary?</p>
+    </div>
+    <span class="badge">Interactive Experiment</span>
+  </div>
+
+  <div class="layout">
+    <div class="control">
+      <div class="field">
+        <label for="emp1">Select an employee</label>
+        <select id="emp1"></select>
+        <div id="info1" class="hint"></div>
+      </div>
+
+      <div class="field">
+        <div class="rangehead">
+          <label for="salarySlider">Adjust monthly salary</label>
+          <span id="salaryVal" class="value"></span>
+        </div>
+        <input id="salarySlider" type="range" min="20000" max="200000" step="100" value="40000">
+        <div class="rangehead hint"><span>NT$ 20,000</span><span>NT$ 200,000</span></div>
+      </div>
+
+      <div class="callout">
+        <strong>What are you changing?</strong>
+        <p class="small">Only the selected employee’s monthly salary changes temporarily; the other 119 employees remain unchanged. Reset restores the original data.</p>
+      </div>
+
+      <div class="buttons">
+        <button id="reset1" class="primary">Reset this experiment</button>
+        <button id="extreme1">Try an extreme salary</button>
+      </div>
+      <div id="feedback1" class="feedback" aria-live="polite"></div>
+    </div>
+
+    <div>
+      <div class="metrics">
+        <div class="metric cyan">
+          <div class="metric-label">Average monthly salary</div>
+          <div id="mean" class="metric-value">—</div>
+          <div id="meanChange" class="hint"></div>
+        </div>
+        <div class="metric purple">
+          <div class="metric-label">Monthly salaryMedian</div>
+          <div id="median" class="metric-value">—</div>
+          <div id="medianChange" class="hint"></div>
+        </div>
+      </div>
+
+      <div class="viz">
+        <div class="charttitle">
+          <h3>Salary distribution histogram</h3>
+          <span class="hint">Bars show the number of employees in each salary range</span>
+        </div>
+        <div id="salaryChart"></div>
+        <div class="legend">
+          <span><i class="dot" style="background:var(--cyan)"></i>Number of employees</span>
+          <span><i class="dot" style="background:var(--purple)"></i>Mean</span>
+          <span><i class="dot" style="background:var(--orange)"></i>Median</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lessons">
+    <div class="lesson">
+      <h3>📘 Mean（Mean）</h3>
+      <div class="formula">Mean = total of all salaries ÷ number of employees</div>
+      <p>Everyone’s salary affects the mean. An extremely high salary usually pulls the mean upward.</p>
+    </div>
+    <div class="lesson">
+      <h3>📗 Median（Median）</h3>
+      <div class="formula">The middle value after sorting</div>
+      <p>For 120 employees, the median is the average of the 60th and 61st salaries. A single extreme value does not necessarily change the median.</p>
+    </div>
+    <div class="lesson">
+      <h3>💡 Think about it</h3>
+      <p class="question">If you set one employee’s salary very high, which statistic usually changes more noticeably, and why?</p>
+      <p>Make a prediction, then move the slider and observe. You can also select another employee and repeat the experiment.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="corr" class="hidden">
+<div class="panel">
+  <div class="charttitle">
+    <div>
+      <div class="eyebrow">LEVEL 02 / CORRELATION</div>
+      <h2>Does Longer Tenure Mean Higher Pay?</h2>
+      <p class="kicker">Adjust one employee’s tenure and monthly salary to observe the overall linear relationship.</p>
+    </div>
+    <span class="badge">Pearson’s r</span>
+  </div>
+
+  <div class="layout">
+    <div class="control">
+      <div class="field">
+        <label for="emp2">Select an employee</label>
+        <select id="emp2"></select>
+        <div id="info2" class="hint"></div>
+      </div>
+
+      <div class="field">
+        <div class="rangehead">
+          <label for="tenureSlider">Adjust tenure</label>
+          <span id="tenureVal" class="value"></span>
+        </div>
+        <input id="tenureSlider" type="range" min="0" max="40" step="0.1" value="5">
+        <div class="rangehead hint"><span>0 years</span><span>40 years</span></div>
+      </div>
+
+      <div class="field">
+        <div class="rangehead">
+          <label for="salarySlider2">Adjust monthly salary</label>
+          <span id="salaryVal2" class="value"></span>
+        </div>
+        <input id="salarySlider2" type="range" min="20000" max="200000" step="100" value="40000">
+        <div class="rangehead hint"><span>NT$ 20,000</span><span>NT$ 200,000</span></div>
+      </div>
+
+      <div class="callout">
+        <strong>Tip</strong>
+        <p class="small">The correlation coefficient describes a linear relationship; it does not mean tenure “causes” higher salaries. Changes affect only the experimental copy on this page.</p>
+      </div>
+
+      <div class="buttons">
+        <button id="reset2" class="primary">Reset this experiment</button>
+        <button id="extreme2">Try high pay with low tenure</button>
+      </div>
+      <div id="feedback2" class="feedback" aria-live="polite"></div>
+    </div>
+
+    <div>
+      <div class="metrics three">
+        <div class="metric cyan">
+          <div class="metric-label">Pearson correlation coefficient r</div>
+          <div id="rVal" class="metric-value">—</div>
+          <div id="rText" class="hint"></div>
+        </div>
+        <div class="metric green">
+          <div class="metric-label">Average tenure</div>
+          <div id="tenureMean" class="metric-value">—</div>
+          <div class="hint">years</div>
+        </div>
+        <div class="metric orange">
+          <div class="metric-label">Average monthly salary</div>
+          <div id="salaryMean2" class="metric-value">—</div>
+          <div class="hint">NTD/month</div>
+        </div>
+      </div>
+
+      <div class="viz">
+        <div class="charttitle">
+          <h3>Tenure × monthly salary scatter plot</h3>
+          <span class="hint">Each point represents one employee</span>
+        </div>
+        <div id="scatter"></div>
+        <div class="legend">
+          <span><i class="dot" style="background:var(--cyan)"></i>Other employees</span>
+          <span><i class="dot" style="background:var(--orange)"></i>Selected employee</span>
+          <span><i class="dot" style="background:var(--purple)"></i>Trend line</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lessons">
+    <div class="lesson">
+      <h3>📐 Pearson Correlation coefficient</h3>
+      <div class="formula">r = Σ[(x − x̄)(y − ȳ)] ÷ √[Σ(x − x̄)² Σ(y − ȳ)²]</div>
+      <p>x is tenure and y is monthly salary. r ranges from −1 to +1 and describes the direction and strength of the linear relationship.</p>
+    </div>
+    <div class="lesson">
+      <h3>🧭 How do you interpret r?</h3>
+      <p>
+        <strong style="color:var(--cyan)">Near +1:</strong>Positive linear relationship.<br>
+        <strong style="color:var(--purple)">Near −1:</strong>Negative linear relationship.<br>
+        <strong style="color:var(--orange)">Near 0:</strong>Weak linear relationship.
+      </p>
+      <p>Interpretation should also consider context, distribution, and sample characteristics.</p>
+    </div>
+    <div class="lesson">
+      <h3>💡 Think about it</h3>
+      <p class="question">How might the scatter plot and r change if you set a very high salary for an employee with very short tenure?</p>
+      <p>Try increasing tenure and observe how the correlation coefficient changes.Correlation does not imply causation.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="panel section-gap">
+  <h2>📝 Assignment Workspace</h2>
+  <p class="kicker">The fields below contain the suggested answers for the assignment. You can edit them, and your changes will be saved automatically in this browser.</p>
+  <div class="lessons">
+    <div class="lesson">
+      <label for="defMean"><strong>Statistical definition of the mean</strong></label>
+      <textarea id="defMean" rows="4" placeholder="Enter your answer…">Susceptible to extreme values</textarea>
+    </div>
+    <div class="lesson">
+      <label for="defMedian"><strong>Statistical definition of the median</strong></label>
+      <textarea id="defMedian" rows="4" placeholder="Enter your answer…">Less susceptible to extreme values</textarea>
+    </div>
+    <div class="lesson">
+      <label for="defR"><strong>Statistical definition of Pearson correlation coefficient r</strong></label>
+      <textarea id="defR" rows="4" placeholder="Enter your answer…">Measure the linear correlation direction of two variables</textarea>
+    </div>
+  </div>
+  <div class="field" style="margin-top:14px">
+    <label for="toLin"><strong>A message to Director Lin</strong></label>
+    <textarea id="toLin" rows="3" placeholder="Write one sentence to Director Lin…">There is a positive correlation between an employee's seniority and salary. It is recommended to further examine the company's salary system to understand whether the salary reasonably reflects the employee's seniority and work performance.</textarea>
+  </div>
+</section>
+
+<section class="panel section-gap">
+  <h3>🧪 About This Lab</h3>
+  <p class="kicker">The original CSV data is embedded in this HTML file. All calculations run locally in your browser. Refreshing the page restores the original data.</p>
+  <p class="small">Fields:EmpID、Department、Gender、Tenure_Years、Monthly_Salary_NTD、Absence_Days、Mentoring、Performance_2026、Engagement_Before、Engagement_After、Job_Satisfaction。</p>
+</section>
+</main>
+<footer>HR People Analytics Lab · For statistics education · Single offline HTML file</footer>
+
+<script>
+
+const CSV = `EmpID,Department,Gender,Tenure_Years,Monthly_Salary_NTD,Absence_Days,Mentoring,Performance_2026,Engagement_Before,Engagement_After,Job_Satisfaction
+1096,Operations,M,3.2,37800,4,Yes,86,3.75,4.0,5.0
+1055,Sales,M,2.0,45100,2,No,64,3.25,3.5,4.0
+1060,Sales,M,1.1,44200,8,No,84,3.5,3.75,6.5
+1118,Operations,M,4.9,47500,6,No,72,3.5,3.75,5.5
+1078,IT,M,6.2,48100,5,No,75,4.0,3.75,7.0
+1047,Sales,M,3.4,43900,3,No,88,2.25,2.25,4.0
+1032,Sales,M,1.5,40100,3,No,71,3.75,3.5,5.5
+1082,IT,M,1.9,51000,2,Yes,74,3.0,3.25,5.5
+1049,Sales,M,6.1,43600,4,Yes,84,1.75,2.0,2.5
+1099,Operations,M,6.9,42700,4,No,53,3.5,3.75,5.0
+1098,Operations,M,4.0,37300,5,No,74,3.25,3.75,5.5
+1100,Operations,M,5.8,44200,5,Yes,64,3.5,3.75,5.0
+1003,HR,M,7.7,45600,3,Yes,85,4.0,4.5,6.0
+1093,Operations,F,5.1,49300,2,Yes,67,3.0,3.5,4.5
+1114,Operations,M,5.1,49300,3,Yes,90,4.25,5.0,4.0
+1057,Sales,M,6.0,45100,8,No,80,2.75,3.5,4.5
+1107,Operations,M,18.3,63400,1,No,86,4.25,5.0,4.5
+1104,Operations,F,6.4,48300,5,Yes,85,3.25,4.0,4.5
+1068,IT,F,6.6,59500,3,Yes,80,2.75,2.75,4.5
+1063,IT,M,4.8,39800,3,No,78,3.0,3.75,5.0
+1113,Operations,F,9.4,53200,4,No,94,4.0,5.0,5.5
+1018,HR,F,1.7,42000,4,Yes,71,3.25,3.75,5.5
+1084,IT,M,5.1,43900,4,Yes,81,3.0,3.25,5.5
+1109,Operations,F,10.7,47100,7,Yes,83,3.5,4.0,7.0
+1074,IT,M,4.4,49300,2,Yes,82,2.0,1.75,6.0
+1097,Operations,M,11.5,56900,6,Yes,67,3.5,3.75,4.0
+1036,Sales,M,6.8,44900,8,No,82,4.0,4.0,4.5
+1045,Sales,F,4.5,49200,1,No,89,3.0,3.75,4.0
+1092,Operations,F,5.9,44400,2,Yes,72,3.25,3.0,4.5
+1115,Operations,M,5.3,48400,2,No,73,2.75,3.25,3.5
+1034,Sales,M,5.3,48500,5,No,66,4.25,5.0,6.0
+1043,Sales,F,2.5,38600,5,No,70,2.75,2.75,5.5
+1059,Sales,M,4.3,51200,5,Yes,91,2.5,2.25,2.5
+1067,IT,M,2.2,48000,6,No,68,2.75,2.5,5.0
+1011,HR,M,9.3,50300,1,Yes,92,2.75,2.25,6.0
+1054,Sales,F,8.6,45100,4,No,74,3.75,3.25,5.0
+1033,Sales,M,10.1,51800,1,No,72,4.25,4.5,4.5
+1081,IT,M,5.4,53000,7,No,81,3.5,3.75,5.5
+1039,Sales,M,5.5,47800,4,Yes,89,3.25,3.0,4.0
+1020,HR,F,3.9,42300,2,No,68,3.0,3.5,3.0
+1120,Operations,F,1.6,41500,1,No,73,3.0,3.25,4.0
+1028,Sales,F,2.4,47000,6,Yes,81,3.0,4.25,5.0
+1037,Sales,M,10.0,54700,4,Yes,90,3.0,3.5,4.5
+1112,Operations,M,9.1,44600,3,No,74,3.5,5.0,3.5
+1040,Sales,F,4.1,43700,4,Yes,82,3.5,3.5,5.0
+1070,IT,M,2.2,48700,4,Yes,71,3.75,4.0,4.5
+1090,IT,F,4.5,51000,2,Yes,71,2.75,3.5,4.5
+1086,IT,M,12.9,60400,4,No,83,2.25,1.75,5.5
+1041,Sales,F,3.7,50400,2,No,75,3.25,3.25,5.0
+1056,Sales,F,10.9,52800,3,Yes,82,2.75,3.75,4.0
+1066,IT,F,3.1,53300,3,No,65,3.0,3.25,4.0
+1089,IT,M,4.8,47100,6,No,70,3.25,3.75,5.5
+1024,Sales,M,4.5,47200,6,No,65,2.0,2.25,4.0
+1035,Sales,M,8.4,51000,3,Yes,92,2.5,2.75,5.0
+1079,IT,F,2.9,44900,6,No,69,2.75,3.75,5.5
+1106,Operations,F,3.0,45800,6,Yes,85,3.5,4.25,5.5
+1005,HR,F,9.4,57000,4,Yes,86,3.0,3.5,6.0
+1083,IT,F,4.5,45000,2,No,76,3.5,4.5,5.0
+1016,HR,F,2.1,39200,3,Yes,81,3.25,4.0,6.0
+1103,Operations,F,11.8,45800,6,Yes,67,3.25,3.25,4.5
+1042,Sales,F,3.7,40200,5,No,83,2.75,3.5,4.5
+1052,Sales,M,2.1,37800,4,Yes,83,3.5,4.0,5.0
+1046,Sales,F,2.5,42200,5,No,83,3.75,4.5,7.0
+1111,Operations,F,13.0,48100,2,No,78,3.25,3.75,6.0
+1053,Sales,M,1.6,35800,1,Yes,84,2.25,2.25,4.0
+1027,Sales,F,1.9,37300,7,No,62,3.25,3.25,5.5
+1044,Sales,F,5.7,48800,5,No,70,3.25,4.5,6.0
+1025,Sales,F,3.4,40000,3,Yes,90,3.0,3.75,3.5
+1095,Operations,F,2.1,36800,3,No,70,2.5,2.25,5.0
+1075,IT,M,3.7,42300,2,No,79,3.0,3.5,6.5
+1101,Operations,F,8.8,45700,4,Yes,67,3.25,4.0,5.5
+1050,Sales,F,1.9,37500,5,Yes,81,4.25,5.0,5.5
+1022,Sales,F,2.7,43100,4,Yes,65,2.75,3.25,5.5
+1071,IT,F,11.9,62200,4,Yes,60,3.0,3.25,4.5
+1004,HR,F,5.8,42200,4,Yes,81,3.5,4.0,5.5
+1119,Operations,M,7.6,45900,1,No,76,3.0,3.0,3.5
+1031,Sales,F,6.8,53000,5,Yes,92,5.0,5.0,3.0
+1117,Operations,F,9.4,44700,3,No,79,2.5,2.25,4.0
+1048,Sales,M,17.6,61500,4,No,87,3.5,3.25,4.0
+1091,Operations,M,2.4,43200,5,No,76,3.25,3.75,4.5
+1009,HR,M,5.4,48800,5,Yes,90,2.5,2.75,5.5
+1061,IT,F,1.1,45200,5,No,65,2.75,2.25,6.5
+1001,HR,F,6.8,42200,4,Yes,79,2.0,2.25,4.5
+1110,Operations,F,5.8,50000,5,Yes,80,2.5,3.0,4.0
+1058,Sales,F,4.9,42700,2,No,65,4.25,4.5,4.0
+1023,Sales,M,7.7,55700,5,No,70,3.5,3.75,3.5
+1062,IT,F,0.9,46500,3,No,64,4.0,4.75,5.0
+1064,IT,F,2.7,53900,7,No,67,3.5,3.75,4.5
+1008,HR,M,1.9,36300,5,No,63,3.0,3.5,7.0
+1116,Operations,F,3.4,35200,8,Yes,82,3.5,5.0,6.0
+1014,HR,M,18.4,63000,2,Yes,62,3.5,5.0,6.5
+1087,IT,M,6.0,47900,5,Yes,79,3.5,3.5,5.5
+1094,Operations,F,11.9,48400,6,Yes,80,3.25,3.5,5.5
+1088,IT,F,5.0,52700,8,No,70,3.5,4.25,5.5
+1069,IT,M,12.6,67600,5,Yes,73,3.25,4.25,4.0
+1105,Operations,F,2.9,39300,3,Yes,68,3.25,3.25,5.0
+1015,HR,F,9.9,43100,5,No,74,3.0,3.25,4.0
+1030,Sales,F,8.8,50000,1,No,77,3.75,4.75,4.0
+1029,Sales,F,2.8,45900,5,Yes,72,3.75,3.75,4.5
+1012,HR,F,17.4,57800,7,No,80,4.0,4.0,4.5
+1085,IT,F,13.0,60900,2,No,69,3.5,3.5,6.0
+1019,HR,M,4.4,39900,1,No,75,2.5,2.5,5.5
+1102,Operations,M,6.9,49700,4,Yes,73,4.25,3.75,4.5
+1021,Sales,F,7.3,51800,2,Yes,88,3.0,4.0,5.5
+1051,Sales,M,2.4,42700,6,No,72,3.25,4.25,6.0
+1026,Sales,M,8.1,46100,4,Yes,79,3.5,3.5,4.5
+1007,HR,M,5.3,47700,3,Yes,80,3.25,3.5,6.0
+1072,IT,M,7.3,53300,10,No,69,2.5,2.0,4.5
+1077,IT,F,1.4,44400,6,Yes,71,3.0,2.75,4.5
+1002,HR,M,7.9,50300,1,Yes,80,2.75,2.75,5.0
+1017,HR,F,8.1,57600,3,Yes,66,4.5,4.75,6.0
+1065,IT,F,4.0,46000,2,No,78,3.25,3.25,5.5
+1080,IT,M,4.8,48200,4,No,75,3.0,3.5,5.5
+1006,HR,F,5.3,46200,4,No,79,4.5,5.0,4.5
+1076,IT,F,5.9,51300,5,No,65,3.25,3.5,5.5
+1010,HR,F,6.4,42100,2,Yes,93,3.0,4.0,6.0
+1073,IT,M,2.6,50500,1,Yes,69,3.0,3.75,6.0
+1013,HR,F,6.4,40300,2,No,70,3.75,4.5,4.5
+1108,Operations,M,2.2,44200,2,No,65,3.75,3.75,4.0
+1038,Sales,F,5.3,47100,7,No,78,3.5,3.75,6.0`;
+function parseCSV(text){
+  const rows=[];let row=[],field="",quoted=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(quoted){
+      if(c==='"'&&text[i+1]==='"'){field+='"';i++;}
+      else if(c==='"')quoted=false;
+      else field+=c;
+    }else if(c==='"')quoted=true;
+    else if(c===','){row.push(field);field="";}
+    else if(c==='\n'){row.push(field);rows.push(row);row=[];field="";}
+    else if(c!=='\r')field+=c;
+  }
+  if(field.length||row.length){row.push(field);rows.push(row);}
+  const headers=rows.shift();
+  return rows.filter(r=>r.length===headers.length)
+    .map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]])));
+}
+const original=parseCSV(CSV).map(d=>({...d,
+  Tenure_Years:Number(d.Tenure_Years),
+  Monthly_Salary_NTD:Number(d.Monthly_Salary_NTD)
+}));
+if(original.length!==120)throw new Error('The number of records is not 120. Please check the embedded CSV.');
+
+let data1=original.map(d=>({...d})),data2=original.map(d=>({...d}));
+const $=id=>document.getElementById(id);
+const money=n=>'NT$ '+Math.round(n).toLocaleString('en-US');
+const num=(n,d=2)=>Number(n).toLocaleString('en-US',{
+  minimumFractionDigits:d,maximumFractionDigits:d
+});
+const label=d=>`Employee ${d.EmpID} · ${d.Department}`;
+
+function mean(a){return a.reduce((s,v)=>s+v,0)/a.length}
+function median(a){
+  const s=[...a].sort((x,y)=>x-y),m=Math.floor(s.length/2);
+  return s.length%2?s[m]:(s[m-1]+s[m])/2
+}
+function pearson(x,y){
+  const mx=mean(x),my=mean(y);let n=0,dx=0,dy=0;
+  for(let i=0;i<x.length;i++){
+    const a=x[i]-mx,b=y[i]-my;
+    n+=a*b;dx+=a*a;dy+=b*b
+  }
+  const den=Math.sqrt(dx*dy);
+  return den===0?0:n/den
+}
+function fillSelect(id){
+  original.forEach((d,i)=>{
+    const o=document.createElement('option');
+    o.value=i;o.textContent=label(d);$(id).appendChild(o)
+  })
+}
+fillSelect('emp1');fillSelect('emp2');
+
+function salaryChart(){
+  const vals=data1.map(d=>d.Monthly_Salary_NTD);
+  const max=Math.max(200000,Math.ceil(Math.max(...vals)/20000)*20000);
+  const bins=10,counts=Array(bins).fill(0);
+  vals.forEach(v=>counts[Math.min(bins-1,Math.floor(v/max*bins))]++);
+  const W=620,H=260,L=48,R=18,T=20,B=43;
+  const pw=W-L-R,ph=H-T-B,mc=Math.max(...counts,1),bw=pw/bins;
+  const av=mean(vals),md=median(vals);
+  let s=`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Salary distribution histogram">`;
+  for(let t=0;t<=4;t++){
+    const y=T+ph*t/4;
+    s+=`<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="#263a54"/>`;
+    s+=`<text x="${L-9}" y="${y+4}" fill="#9eb1c9" font-size="11" text-anchor="end">${Math.round(mc*(1-t/4))}</text>`
+  }
+  counts.forEach((c,i)=>{
+    const bh=c/mc*ph,x=L+i*bw+4,y=T+ph-bh;
+    s+=`<rect x="${x}" y="${y}" width="${bw-8}" height="${bh}" rx="4" fill="#42d7e8" opacity=".76"><title>${Math.round(i*max/bins).toLocaleString()}–${Math.round((i+1)*max/bins).toLocaleString()} NTD: ${c} employees</title></rect>`;
+    s+=`<text x="${L+i*bw+bw/2}" y="${H-20}" fill="#9eb1c9" font-size="10" text-anchor="middle">${Math.round(i*max/bins/1000)}k</text>`
+  });
+  const xf=v=>L+Math.max(0,Math.min(max,v))/max*pw;
+  [[av,'#b49aff','Mean'],[md,'#ffbd73','Median']].forEach(([v,c,t])=>{
+    const x=xf(v);
+    s+=`<line x1="${x}" y1="${T}" x2="${x}" y2="${T+ph}" stroke="${c}" stroke-width="2" stroke-dasharray="5 4"/>`;
+    s+=`<text x="${Math.min(W-R-5,Math.max(L+5,x))}" y="${t==='Mean'?13:T+14}" fill="${c}" font-size="11">${t}</text>`
+  });
+  s+=`<text x="${W/2}" y="${H-3}" fill="#9eb1c9" font-size="11" text-anchor="middle">Monthly Salary (NTD)</text></svg>`;
+  $('salaryChart').innerHTML=s
+}
+
+function update1(){
+  const i=+$('emp1').value,base=original[i],v=+$('salarySlider').value;
+  data1[i].Monthly_Salary_NTD=v;
+  $('salaryVal').textContent=money(v);
+  $('info1').textContent=`Department: ${base.Department} | Original monthly salary: ${money(base.Monthly_Salary_NTD)}`;
+  const a=data1.map(d=>d.Monthly_Salary_NTD);
+  const old=original.map(d=>d.Monthly_Salary_NTD);
+  const m=mean(a),md=median(a);
+  $('mean').textContent=money(m);
+  $('median').textContent=money(md);
+  $('meanChange').textContent=`Change from original: ${m-mean(old)>=0?'+':''}${money(m-mean(old))}`;
+  $('medianChange').textContent=`Change from original: ${md-median(old)>=0?'+':''}${money(md-median(old))}`;
+  $('feedback1').textContent=v===base.Monthly_Salary_NTD?'The current salary matches the original data.':'Experimental value updated; original data remains unchanged.';
+  salaryChart();
+  saveState()
+}
+function reset1(){
+  data1=original.map(d=>({...d}));
+  $('emp1').value='0';
+  $('salarySlider').value=original[0].Monthly_Salary_NTD;
+  update1()
+}
+$('emp1').addEventListener('change',()=>{
+  $('salarySlider').value=data1[+$('emp1').value].Monthly_Salary_NTD;
+  update1()
+});
+$('salarySlider').addEventListener('input',update1);
+$('reset1').addEventListener('click',reset1);
+$('extreme1').addEventListener('click',()=>{
+  $('salarySlider').value=200000;update1();
+  $('feedback1').textContent='The selected employee’s monthly salary has been set to NT$ 200,000. Observe the difference between the mean and median.'
+});
+
+function scatter(){
+  const xs=data2.map(d=>d.Tenure_Years),ys=data2.map(d=>d.Monthly_Salary_NTD);
+  const xmax=Math.max(10,Math.ceil(Math.max(...xs)/5)*5);
+  const ymax=Math.max(200000,Math.ceil(Math.max(...ys)/20000)*20000);
+  const W=620,H=330,L=58,R=22,T=18,B=48,pw=W-L-R,ph=H-T-B;
+  const X=x=>L+x/xmax*pw,Y=y=>T+ph-y/ymax*ph;
+  const mx=mean(xs),my=mean(ys);let nume=0,den=0;
+  xs.forEach((x,i)=>{nume+=(x-mx)*(ys[i]-my);den+=(x-mx)**2});
+  const slope=den?nume/den:0,inter=my-slope*mx;
+  let s=`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Tenure and monthly salary scatter plot">`;
+  for(let j=0;j<=4;j++){
+    const y=T+ph*j/4;
+    s+=`<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="#263a54"/>`;
+    s+=`<text x="${L-9}" y="${y+4}" fill="#9eb1c9" font-size="10" text-anchor="end">${Math.round(ymax*(1-j/4)/1000)}k</text>`;
+    const x=L+pw*j/4;
+    s+=`<line x1="${x}" y1="${T}" x2="${x}" y2="${T+ph}" stroke="#263a54"/>`;
+    s+=`<text x="${x}" y="${H-25}" fill="#9eb1c9" font-size="10" text-anchor="middle">${Math.round(xmax*j/4)}</text>`
+  }
+  s+=`<line x1="${X(0)}" y1="${Y(Math.max(0,Math.min(ymax,inter)))}" x2="${X(xmax)}" y2="${Y(Math.max(0,Math.min(ymax,inter+slope*xmax)))}" stroke="#b49aff" stroke-width="2.5" stroke-dasharray="6 4"/>`;
+  const selected=+$('emp2').value;
+  data2.forEach((d,i)=>{
+    const x=X(d.Tenure_Years),y=Y(d.Monthly_Salary_NTD);
+    const c=i===selected?'#ffbd73':'#42d7e8',r=i===selected?6.5:3.6;
+    s+=`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}" stroke="${i===selected?'#fff':'none'}"><title>Employee ${d.EmpID} | Tenure: ${num(d.Tenure_Years,1)} years | Monthly salary: ${money(d.Monthly_Salary_NTD)}</title></circle>`
+  });
+  s+=`<text x="${W/2}" y="${H-5}" fill="#9eb1c9" font-size="11" text-anchor="middle">Tenure (years)</text><text x="15" y="${H/2}" fill="#9eb1c9" font-size="11" text-anchor="middle" transform="rotate(-90 15 ${H/2})">Monthly Salary (NTD)</text></svg>`;
+  $('scatter').innerHTML=s
+}
+
+function update2(){
+  const i=+$('emp2').value,base=original[i];
+  data2[i].Tenure_Years=+$('tenureSlider').value;
+  data2[i].Monthly_Salary_NTD=+$('salarySlider2').value;
+  const xs=data2.map(d=>d.Tenure_Years),ys=data2.map(d=>d.Monthly_Salary_NTD);
+  const r=pearson(xs,ys),a=Math.abs(r);
+  const strength=a<.1?'Very little':a<.3?'Weak':a<.5?'Moderately weak':a<.7?'Moderate':a<.9?'Strong':'Very strong';
+  const direction=r>.02?'Positive':r<-.02?'Negative':'Near zero';
+  $('tenureVal').textContent=num(data2[i].Tenure_Years,1)+' years';
+  $('salaryVal2').textContent=money(data2[i].Monthly_Salary_NTD);
+  $('info2').textContent=`Department: ${base.Department} | Original tenure: ${num(base.Tenure_Years,1)} years | Original monthly salary: ${money(base.Monthly_Salary_NTD)}`;
+  $('rVal').textContent=num(r,3);
+  $('rText').textContent=`${direction} linear correlation · ${strength}`;
+  $('tenureMean').textContent=num(mean(xs),2);
+  $('salaryMean2').textContent=money(mean(ys));
+  $('feedback2').textContent=data2[i].Tenure_Years===base.Tenure_Years&&data2[i].Monthly_Salary_NTD===base.Monthly_Salary_NTD?'The current values match the original data.':'Experimental values updated; the scatter plot and r have been recalculated.';
+  scatter();
+  saveState()
+}
+function reset2(){
+  data2=original.map(d=>({...d}));
+  $('emp2').value='0';
+  $('tenureSlider').value=original[0].Tenure_Years;
+  $('salarySlider2').value=original[0].Monthly_Salary_NTD;
+  update2()
+}
+$('emp2').addEventListener('change',()=>{
+  $('tenureSlider').value=data2[+$('emp2').value].Tenure_Years;
+  $('salarySlider2').value=data2[+$('emp2').value].Monthly_Salary_NTD;
+  update2()
+});
+['tenureSlider','salarySlider2'].forEach(id=>$(id).addEventListener('input',update2));
+$('reset2').addEventListener('click',reset2);
+$('extreme2').addEventListener('click',()=>{
+  $('tenureSlider').value=0;
+  $('salarySlider2').value=200000;
+  update2();
+  $('feedback2').textContent='The selected employee has been set to 0 years of tenure and a monthly salary of NT$ 200,000.'
+});
+
+function tab(which){
+  const one=which===1;
+  $('salary').classList.toggle('hidden',!one);
+  $('corr').classList.toggle('hidden',one);
+  $('tab1').setAttribute('aria-selected',String(one));
+  $('tab2').setAttribute('aria-selected',String(!one));
+  if(typeof saveState==='function') saveState()
+}
+$('tab1').addEventListener('click',()=>tab(1));
+$('tab2').addEventListener('click',()=>tab(2));
+
+const STORAGE_KEY = 'hrPeopleAnalyticsLabState_v2';
+const LEGACY_STORAGE_KEY = 'hrPeopleAnalyticsLabState_v1';
+function saveState(){
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      data1, data2,
+      emp1:$('emp1').value, salarySlider:$('salarySlider').value,
+      emp2:$('emp2').value, tenureSlider:$('tenureSlider').value,
+      salarySlider2:$('salarySlider2').value,
+      activeTab:$('tab2').getAttribute('aria-selected')==='true' ? 2 : 1,
+      answers:Object.fromEntries(['defMean','defMedian','defR','toLin'].map(id=>[id,$(id).value]))
+    }));
+  } catch(e) { console.warn('Could not save lab state:', e); }
+}
+function restoreState(){
+  try {
+    let raw=localStorage.getItem(STORAGE_KEY);
+    const isLegacyState=!raw;
+    if(!raw) raw=localStorage.getItem(LEGACY_STORAGE_KEY);
+    if(!raw) return;
+    const s=JSON.parse(raw);
+    if(Array.isArray(s.data1)&&s.data1.length===original.length) data1=s.data1;
+    if(Array.isArray(s.data2)&&s.data2.length===original.length) data2=s.data2;
+    if(s.emp1!==undefined) $('emp1').value=s.emp1;
+    if(s.salarySlider!==undefined) $('salarySlider').value=s.salarySlider;
+    if(s.emp2!==undefined) $('emp2').value=s.emp2;
+    if(s.tenureSlider!==undefined) $('tenureSlider').value=s.tenureSlider;
+    if(s.salarySlider2!==undefined) $('salarySlider2').value=s.salarySlider2;
+    if(s.answers) Object.entries(s.answers).forEach(([id,value])=>{
+      if($(id)) {
+        const defaults = {
+          defMean: 'Susceptible to extreme values',
+          defMedian: 'Less susceptible to extreme values',
+          defR: 'Measure the linear correlation direction of two variables',
+          toLin: "There is a positive correlation between an employee's seniority and salary. It is recommended to further examine the company's salary system to understand whether the salary reasonably reflects the employee's seniority and work performance."
+        };
+        const oldBuiltInLin = "林協理，員工的工作年資與薪資呈現正相關，建議進一步檢視公司的薪資制度，了解薪資是否合理反映員工的年資與工作表現。";
+        // Keep genuine user edits. Replace blank answers and the previous built-in Director Lin sentence with the new defaults.
+        if (!String(value ?? '').trim() || (id === 'toLin' && value === oldBuiltInLin)) {
+          $(id).value = defaults[id] ?? value;
+        } else {
+          $(id).value=value;
+        }
+      }
+    });
+    tab(s.activeTab===2?2:1);
+  } catch(e) { console.warn('Could not restore saved lab state:', e); }
+}
+['defMean','defMedian','defR','toLin'].forEach(id=>$(id).addEventListener('input',saveState));
+window.addEventListener('pagehide',saveState);
+
+reset1();
+reset2();
+restoreState();
+update1();
+update2();
+saveState();
+
+</script>
+</body>
+</html>
